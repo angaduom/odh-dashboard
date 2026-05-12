@@ -2,6 +2,8 @@ import { createDataConnection } from './oc_commands/dataConnection';
 import { createDSPASecret, createDSPA } from './oc_commands/dspa';
 import { AWS_BUCKETS } from './s3Buckets';
 import { createCleanProject } from './projectChecker';
+import { addUserToProject, waitForUserProjectAccess } from './oc_commands/project';
+import { HTPASSWD_CLUSTER_ADMIN_USER } from './e2eUsers';
 import type { DataConnectionReplacements, DspaSecretReplacements } from '../types';
 
 /**
@@ -41,6 +43,12 @@ export const provisionProjectForAutoX = (
   const { host, scheme } = parseS3Endpoint(dspaEndpoint ?? bucketConfig.ENDPOINT);
 
   createCleanProject(projectName);
+
+  const testUser = HTPASSWD_CLUSTER_ADMIN_USER.USERNAME;
+  if (testUser) {
+    addUserToProject(projectName, testUser, 'edit');
+    waitForUserProjectAccess(projectName, testUser);
+  }
 
   const dataConnectionReplacements: DataConnectionReplacements = {
     NAMESPACE: projectName,
