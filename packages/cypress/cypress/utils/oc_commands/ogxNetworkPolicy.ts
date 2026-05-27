@@ -86,7 +86,8 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      app: llama-stack
+      app: ogx
+      app.kubernetes.io/instance: ogx-server
   ingress:
   - from:
     - namespaceSelector:

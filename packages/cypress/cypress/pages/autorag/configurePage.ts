@@ -178,7 +178,10 @@ class AutoragConfigurePage {
 
     cy.step('Wait for pipeline server to be fully ready and click Create run');
     cy.findByRole('heading', { name: /autorag/i, timeout: 120000 }).should('be.visible');
-    autoragExperimentsPage.findCreateRunButton().click();
+    autoragExperimentsPage
+      .findCreateRunButton()
+      .should('not.be.disabled', { timeout: 30000 })
+      .click();
 
     cy.step('Step 1 - Fill name and description');
     this.findNameInput().should('be.visible', { timeout: 30000 }).type(testData.runName);
@@ -228,7 +231,7 @@ class AutoragConfigurePage {
     );
 
     cy.step('Select first available vector store');
-    this.findVectorStoreSelector().click();
+    this.findVectorStoreSelector().should('not.be.disabled', { timeout: 30000 }).click();
     this.findFirstVectorStoreOption().should('be.visible').click();
     // Verify the selection was applied — dropdown should close and placeholder text should be gone
     cy.contains('.pf-v6-c-menu-toggle', /select vector/i).should('not.exist');
