@@ -177,9 +177,13 @@ class AutoragConfigurePage {
     autoragExperimentsPage.visit(projectName);
 
     cy.step('Wait for pipeline server to be fully ready and click Create run');
+    // The dashboard BFF polls for the DSPA on a separate interval. After the K8s
+    // DSPA resource is Ready, wait briefly for the BFF to discover it so the
+    // experiments page renders the Create Run button instead of a loading state.
     cy.findByRole('heading', { name: /autorag/i, timeout: 120000 }).should('be.visible');
     autoragExperimentsPage
       .findCreateRunButton()
+      .should('exist', { timeout: 60000 })
       .should('not.be.disabled', { timeout: 30000 })
       .click();
 
